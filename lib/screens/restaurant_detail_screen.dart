@@ -169,13 +169,23 @@ Widget _buildReviewsList(List<Review> reviews) {
         } else if (firebaseSnapshot.hasError) {
           return Center(child: Text('Error: ${firebaseSnapshot.error}'));
         } else {
-          final List<Review> firebaseReviews = firebaseSnapshot.data ?? [];
-          // Display Firebase reviews
-          return _buildReviewsList(firebaseReviews);
+          List<Review>? firebaseReviews = firebaseSnapshot.data;
+
+          if (firebaseReviews == null || firebaseReviews.isEmpty) {
+            return Center(child: Text('değerlendirme_bulunmamaktadır'.tr));
+          }
+
+          return Container(
+            height: 200, // Set a fixed height or use constraints based on your UI design
+            child: _buildReviewsList(firebaseReviews),
+          );
         }
       },
     );
   }
+
+
+
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Padding(

@@ -54,7 +54,7 @@ class _RestaurantMapState extends State<RestaurantMap> {
           backgroundColor: Colors.transparent,
           title: Text('Yakınımdaki Restoranlar'),
         ),
-        drawer: MyDrawer(),
+        bottomNavigationBar: MyBottomNavigationBar(),
         body:GoogleMap(
           onMapCreated: (controller) {
     mapController = controller;

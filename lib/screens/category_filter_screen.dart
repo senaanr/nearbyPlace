@@ -173,7 +173,10 @@ class CombinedScreen extends StatelessWidget {
               Expanded(
                 child: Container(
                   constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width - 16.0,
+                    maxWidth: MediaQuery
+                        .of(context)
+                        .size
+                        .width - 16.0,
                   ),
                   child: HomeSearchBar(),
                 ),
@@ -184,7 +187,9 @@ class CombinedScreen extends StatelessWidget {
         body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: Theme.of(context).brightness == Brightness.light
+              image: Theme
+                  .of(context)
+                  .brightness == Brightness.light
                   ? AssetImage('assets/image/road3.jpg')
                   : AssetImage('assets/image/road2.jpg'),
               fit: BoxFit.cover,
@@ -261,7 +266,8 @@ class CombinedScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => RestaurantListScreen(categoryName: categoryName!),
+                builder: (context) =>
+                    RestaurantListScreen(categoryName: categoryName),
               ),
             );
           }
@@ -269,12 +275,13 @@ class CombinedScreen extends StatelessWidget {
           print('Error while navigating to RestaurantListScreen: $e');
         }
       },
-
       child: Container(
         margin: EdgeInsets.all(8.0),
         padding: EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: Theme.of(context).brightness == Brightness.light
+          color: Theme
+              .of(context)
+              .brightness == Brightness.light
               ? Colors.white
               : Colors.black,
           borderRadius: BorderRadius.circular(8.0),
@@ -293,7 +300,11 @@ class CombinedScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).textTheme.titleLarge?.color,
+              color: Theme
+                  .of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.color,
             ),
           ),
         ),
@@ -302,7 +313,7 @@ class CombinedScreen extends StatelessWidget {
   }
 }
 
-class HomeSearchBar extends StatefulWidget {
+  class HomeSearchBar extends StatefulWidget {
   @override
   _HomeSearchBarState createState() => _HomeSearchBarState();
 }

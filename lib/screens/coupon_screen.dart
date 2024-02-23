@@ -17,7 +17,7 @@ class CouponPage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      drawer: MyDrawer(),
+      bottomNavigationBar: MyBottomNavigationBar(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

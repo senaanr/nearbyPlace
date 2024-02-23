@@ -181,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
         preferredSize: Size.fromHeight(0.0),
         child: AppBar(),
       ),
-      drawer: MyDrawer(),
+      bottomNavigationBar: MyBottomNavigationBar(),
       body: SafeArea(
         child: Theme(
           data: Theme.of(context),

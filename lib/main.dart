@@ -44,18 +44,15 @@ import 'bloc/location_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
-    const MaterialApp(
-      home: MyApp(),
-    ),
+    const MyApp(),
   );
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -85,6 +82,7 @@ class MyApp extends StatelessWidget {
           darkTheme: Themes.darkTheme,
           themeMode: ThemeMode.system,
           home: SplashScreen(),
+            debugShowCheckedModeBanner: false
         ),
       ),
     );
@@ -105,7 +103,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: implement initState
     super.initState();
     Future.delayed(const Duration(seconds: 5)).then((value) => Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (context) => ChooseScreen())));
+        .pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen())));
   }
 
   @override

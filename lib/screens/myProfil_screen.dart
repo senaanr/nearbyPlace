@@ -244,7 +244,7 @@ class _AccountPageState extends State<AccountPage> {
         preferredSize: Size.fromHeight(0.0),
         child: AppBar(),
       ),
-      drawer: MyDrawer(),
+      bottomNavigationBar: MyBottomNavigationBar(),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(

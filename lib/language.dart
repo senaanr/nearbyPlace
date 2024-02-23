@@ -95,6 +95,10 @@ class Language extends Translations{
       "kategoriler":"Categories",
       "ad":"Name",
       "soyad":"Surname",
+      "bu_kategoride_restoran_bulunamadı":"Could not find any resaurants in this category.",
+      "çıkış_yap":"Log out",
+      "değerlendirmeler":"Reviews",
+      "değerlendirme_bulunmamaktadır":"No Reviews."
     },
     'tr_TR':{
       "kullanıcı": "Kullanıcı",
@@ -181,6 +185,10 @@ class Language extends Translations{
       "kategoriler":"Kategoriler",
       "ad":"Ad",
       "soyad":"Soyad",
+      "bu_kategoride_restoran_bulunamadı":"Bu kategoride restoran bulunamadı.",
+      "çıkış_yap":"Çıkış Yap",
+      "değerlendirmeler":"Değerlendirmeler",
+      "değerlendirme_bulunmamaktadır":"Değerlendirme Bulunmamaktadır.",
     }
   };
 }

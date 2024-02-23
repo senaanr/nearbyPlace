@@ -212,6 +212,8 @@ import 'package:myapp/components/myDrawer.dart';
 import 'package:myapp/screens/restaurant_detail_screen.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../constants/app_constants.dart';
+
 
 class Restaurant {
   final String id;
@@ -320,6 +322,7 @@ class RestaurantListScreen extends StatefulWidget {
 }
 
 class _RestaurantListScreenState extends State<RestaurantListScreen> {
+  late String backgroundImage;
   late Future<List<Restaurant>> futureRestaurants;
   double userLat = 0.0;
   double userLng =0.0;
@@ -327,7 +330,7 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
   Set<String> favoriteRestaurantIds = {};
 
   // Map to associate categories with background images
-  final Map<String, String> categoryBackgroundImages = {
+  /*final Map<String, String> categoryBackgroundImages = {
     "burger":"assets/image/burger.jpg",
     "kebap_türk_mutfağı":"assets/image/burger.jpg",
     "tatlı":"assets/image/burger.jpg",
@@ -353,13 +356,14 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
 
   String getBackgroundImage(String category) {
     return categoryBackgroundImages[category] ?? 'assets/image/road3.jpg';
-  }
+  }*/
 
   @override
   void initState() {
     super.initState();
     _getUserLocation();
     futureRestaurants = fetchRestaurantsByCategory(widget.categoryName);
+    backgroundImage = getCategoryBackgroundImage(widget.categoryName);
   }
 
 
@@ -373,6 +377,8 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
         userLat = position.latitude;
         userLng = position.longitude;
         futureRestaurants = fetchRestaurantsByCategory(widget.categoryName);
+        backgroundImage = getCategoryBackgroundImage(widget.categoryName);
+        print("Selected Category: ${widget.categoryName}");
       });
     } catch (e) {
       print('Could not get location: $e');
@@ -416,6 +422,7 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -435,7 +442,7 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
         body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(getBackgroundImage(widget.categoryName)),
+              image: AssetImage(backgroundImage),
               fit: BoxFit.cover,
             ),
           ),
@@ -453,116 +460,118 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
                     } else {
                       final restaurants = snapshot.data!;
                       return ListView.builder(
-                        itemCount: restaurants.length,
+                        itemCount: restaurants.length > 0 ? restaurants.length : 1,
                         itemBuilder: (context, index) {
-                          final restaurant = restaurants[index];
-                          print('restoran ${restaurant.photoReference}');
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RestaurantDetails(
-                                    placeId: restaurant.id,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.all(8),
-                              margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                                    children: [
-                                      Image.network(
-                                        restaurant.photoReference.isNotEmpty
-                                            ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${restaurant.photoReference}&key=AIzaSyCnSvScJH5ItNThRlphgqAtnk9i0W85mlc'
-                                            : 'https://cdn-icons-png.freepik.com/512/1996/1996055.png', // Default image URL
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          // Display a default image when an error occurs
-                                          return Image.network(
-                                            'https://cdn-icons-png.freepik.com/512/1996/1996055.png',
-                                            fit: BoxFit.cover,
-                                          );
-                                        },
-                                      ),
-
-                                      SizedBox(height: 10),
-                                      Text(
-                                        restaurant.name,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color:Theme.of(context).textTheme.titleLarge?.color,
-                                        ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        'Uzaklık:'.tr + restaurant.distance.toStringAsFixed(2) + ' km' ,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color:Theme.of(context).textTheme.titleLarge?.color,
-
-                                        ),
-                                      ),
-                                      SizedBox(height: 5),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            'Puan:'.tr + restaurant.rating.toStringAsFixed(1),
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color:Theme.of(context).textTheme.titleLarge?.color,
-
-                                            ),
-                                          ),
-                                          SizedBox(width: 5),
-                                          Row(
-                                            children: List.generate(
-                                              5,
-                                                  (index) => Icon(
-                                                Icons.star,
-                                                color: index < restaurant.rating.round() ? Colors.yellow : Colors.grey,
-                                                size: 20,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Positioned(
-                                    top: 10,
-                                    right: 10,
-                                    child: IconButton(
-                                      icon: Icon(
-                                        favoriteRestaurantIds.contains(restaurant.id) ? Icons.favorite : Icons.favorite_border,
-                                        color: Colors.red,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          if (favoriteRestaurantIds.contains(restaurant.id)) {
-                                            favoriteRestaurantIds.remove(restaurant.id); // Favoriden çıkar
-                                          } else {
-                                            favoriteRestaurantIds.add(restaurant.id); // Favoriye ekle
-                                          }
-                                        });
-                                      },
+                          if (restaurants.length > 0) {
+                            final restaurant = restaurants[index];
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RestaurantDetails(
+                                      placeId: restaurant.id,
                                     ),
                                   ),
-                                ],
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        Image.network(
+                                          restaurant.photoReference.isNotEmpty
+                                              ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${restaurant.photoReference}&key=AIzaSyCnSvScJH5ItNThRlphgqAtnk9i0W85mlc'
+                                              : 'https://cdn-icons-png.freepik.com/512/1996/1996055.png',
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Image.network(
+                                              'https://cdn-icons-png.freepik.com/512/1996/1996055.png',
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          restaurant.name,
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context).textTheme.titleLarge?.color,
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Text(
+                                          'Uzaklık:'.tr + restaurant.distance.toStringAsFixed(2) + ' km',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Theme.of(context).textTheme.titleLarge?.color,
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Puan:'.tr + restaurant.rating.toStringAsFixed(1),
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Theme.of(context).textTheme.titleLarge?.color,
+                                              ),
+                                            ),
+                                            SizedBox(width: 5),
+                                            Row(
+                                              children: List.generate(
+                                                5,
+                                                    (index) => Icon(
+                                                  Icons.star,
+                                                  color: index < restaurant.rating.round() ? Colors.yellow : Colors.grey,
+                                                  size: 20,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    Positioned(
+                                      top: 10,
+                                      right: 10,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          favoriteRestaurantIds.contains(restaurant.id) ? Icons.favorite : Icons.favorite_border,
+                                          color: Colors.red,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            if (favoriteRestaurantIds.contains(restaurant.id)) {
+                                              favoriteRestaurantIds.remove(restaurant.id);
+                                            } else {
+                                              favoriteRestaurantIds.add(restaurant.id);
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          } else {
+                            return Center(
+                              child: Text('bu_kategoride_restoran_bulunamadı.'.tr),
+                            );
+                          }
                         },
                       );
+
                     }
                   },
                 ),
@@ -603,6 +612,12 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
       },
     );
   }
+
+  String getCategoryBackgroundImage(String category) {
+    // İlgili kategoriye göre arka plan resmini döndür
+    // Eğer kategoriye özel bir resim yoksa, default bir resim döndür
+    return AppConstants.categoryBackgroundImages[category] ?? AppConstants.defaultBackgroundImage;
+  }
 }
 
 
@@ -618,7 +633,7 @@ class FavoriteRestaurants extends StatelessWidget {
         title: Text('favori_restoranlar'.tr),
         centerTitle: true,
       ),
-      drawer: MyDrawer(),
+      bottomNavigationBar: MyBottomNavigationBar(),
       body: favoriteRestaurants != null
           ? ListView.builder(
         itemCount: favoriteRestaurants!.length,
