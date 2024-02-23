@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:myapp/class/themes.dart';
+import 'package:myapp/components/myDrawer.dart';
 
 class CouponPage extends StatelessWidget {
   @override
@@ -6,7 +9,7 @@ class CouponPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Kuponlarım',
+          'Kuponlarım'.tr,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 17,
@@ -14,11 +17,13 @@ class CouponPage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
+      drawer: MyDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CouponWidget(), // CouponWidget'i burada kullanıcıya özel bilgilerle güncelleyebilirsiniz.
+            Theme(data: Theme.of(context), child: CouponWidget(),)
+             // CouponWidget'i burada kullanıcıya özel bilgilerle güncelleyebilirsiniz.
           ],
         ),
       ),
@@ -77,7 +82,7 @@ class CouponWidget extends StatelessWidget {
         ),
         SizedBox(height: 1), // Azaltılan boşluk
         Text(
-          'Kuponunuz Yok',
+          'kuponunuz_yok'.tr,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,

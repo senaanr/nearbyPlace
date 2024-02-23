@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class EditPage extends StatefulWidget {
   final String label;
@@ -42,7 +43,7 @@ class _EditPageState extends State<EditPage> {
               onPressed: () {
                 Navigator.pop(context, _controller.text);
               },
-              child: Text('Kaydet'),
+              child: Text('kaydet'.tr),
             ),
           ],
         ),

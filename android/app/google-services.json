@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "536092131189",
+    "project_id": "neyesem-11568",
+    "storage_bucket": "neyesem-11568.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:536092131189:android:f882471a7521a8f8c4dd3c",
+        "android_client_info": {
+          "package_name": "com.example.myapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIcNvoeE14VPWWanuoHTHqOy7bNbefp2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

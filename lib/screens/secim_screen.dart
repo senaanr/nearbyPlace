@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:myapp/screens/user_login_screen.dart';
 import 'package:myapp/screens/restaurant_login_screen.dart';
 
@@ -10,7 +13,9 @@ class ChooseScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/image/road3.jpg'), // Arka plan resmi
+            image: Theme.of(context).brightness == Brightness.light
+                ? AssetImage('assets/image/road3.jpg')
+                : AssetImage('assets/image/road2.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -27,7 +32,8 @@ class ChooseScreen extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => UserLoginScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => UserLoginScreen()),
                           );
                         },
                         child: CircleAvatar(
@@ -35,12 +41,16 @@ class ChooseScreen extends StatelessWidget {
                           backgroundColor: Colors.transparent,
                           child: Align(
                             alignment: Alignment.center,
-                            child: Icon(Icons.account_circle, size: 50, color: Colors.white),
+                            child: Icon(Icons.account_circle,
+                                size: 50, color: Colors.white),
                           ),
                         ),
                       ),
                       SizedBox(height: 10),
-                      Text('Kullanıcı', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                      Text('kullanıcı'.tr,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
                     ],
                   ),
                   SizedBox(width: 20),
@@ -50,7 +60,8 @@ class ChooseScreen extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => RestaurantLoginScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => RestaurantLoginScreen()),
                           );
                         },
                         child: CircleAvatar(
@@ -58,16 +69,66 @@ class ChooseScreen extends StatelessWidget {
                           backgroundColor: Colors.transparent,
                           child: Align(
                             alignment: Alignment.center,
-                            child: Icon(Icons.restaurant, size: 50, color: Colors.white),
+                            child: Icon(Icons.restaurant,
+                                size: 50, color: Colors.white),
                           ),
                         ),
                       ),
                       SizedBox(height: 10),
-                      Text('Restoran', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))
+                      Text('restoran'.tr,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white))
                     ],
                   ),
                 ],
               ),
+              SizedBox(
+                height: 125,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    child: Container(
+                      child: Text(
+                        'EN',
+                        style: GoogleFonts.quicksand(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        color: Colors.blueAccent,
+                      ),
+                      padding: EdgeInsets.all(15),
+                    ),
+                    onTap: () {
+                      Get.updateLocale(Locale('en','US'),);
+                    },
+                  ),
+                  InkWell(
+                    child: Container(
+                      margin: EdgeInsets.only(left: 10),
+                      child: Text(
+                        'TR',
+                        style: GoogleFonts.quicksand(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        color: Colors.redAccent,
+                      ),
+                      padding: EdgeInsets.all(15),
+                    ),
+                    onTap: () {
+                      Get.updateLocale(Locale('tr','TR'),);
+                    },
+                  )
+                ],
+              )
             ],
           ),
         ),

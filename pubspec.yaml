@@ -34,7 +34,7 @@ dependencies:
   google_maps_flutter: ^2.5.0
   lottie: ^2.7.0
   dartz: ^0.10.1
-  flutter_riverpod: ^2.4.9
+  flutter_riverpod: ^2.4.10
   fab_circular_menu_plus: ^0.0.1
   flutter_polyline_points: ^2.0.0
   flutter_rating_stars: ^1.0.3+4
@@ -43,6 +43,15 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   location: ^5.0.3
   geocoding: ^2.1.1
+  http: ^1.2.0
+  flutter_localization: ^0.2.0
+  intl_translation: ^0.18.2
+  get: ^4.6.6
+  google_fonts: ^6.1.0
+  firebase_core: ^2.25.4
+  firebase_auth: ^4.17.4
+  cloud_firestore: ^4.15.5
+  flutter_rating_bar: ^4.0.1
 
 flutter_icons:
   android: "launcher_icon"
@@ -58,6 +67,10 @@ flutter_icons:
   http: ^1.1.2
   google_bard: ^0.0.1
   get: ^4.6.6
+  flutter_localizations:
+    sdk:flutter
+  intl: ^0.18.1
+
 
 
 dev_dependencies:
@@ -82,6 +95,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  generate : true
 
   # To add assets to your application, add an assets section, like this:
   assets:

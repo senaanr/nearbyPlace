@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../screens/restaurant_list.dart';
+
 class CategoryItem extends StatelessWidget {
   final String? categoryName;
   final String? imageUrl;
@@ -11,7 +13,12 @@ class CategoryItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (categoryName != null) {
-          print('Tıklandı: $categoryName');
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RestaurantListScreen(categoryName: categoryName!),
+            ),
+          );
         }
       },
       child: Container(
@@ -36,7 +43,7 @@ class CategoryItem extends StatelessWidget {
                   categoryName!,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[700],
+                    color:Theme.of(context).textTheme.titleLarge?.color,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

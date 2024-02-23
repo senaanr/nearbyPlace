@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 
 class RestaurantLoginScreen extends StatelessWidget {
   RestaurantLoginScreen({super.key});
@@ -92,14 +93,14 @@ class RestaurantLoginScreen extends StatelessWidget {
             ),
             UserFormField(
               keyName: 'phone_number',
-              displayName: 'Telefon Numarası',
+              displayName: 'cep_telefonu'.tr,
               userType: LoginUserType.phone,
               fieldValidator: (value) {
                 final phoneRegExp = RegExp(
                   '^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}\$',
                 );
                 if (value != null && value.length < 7 && !phoneRegExp.hasMatch(value)) {
-                  return "Geçersiz telefon numarası";
+                  return "geçersiz_telefon_numarası".tr;
                 }
                 return null;
               },
@@ -122,24 +123,6 @@ class RestaurantLoginScreen extends StatelessWidget {
               },
             ),
             LoginProvider(
-              icon: FontAwesomeIcons.facebookF,
-              callback: () async {
-                debugPrint('start facebook sign in');
-                await Future.delayed(loginTime);
-                debugPrint('stop facebook sign in');
-                return null;
-              },
-            ),
-            LoginProvider(
-              icon: FontAwesomeIcons.linkedinIn,
-              callback: () async {
-                debugPrint('start linkdin sign in');
-                await Future.delayed(loginTime);
-                debugPrint('stop linkdin sign in');
-                return null;
-              },
-            ),
-            LoginProvider(
               icon: Icons.person,
               callback: () async {
                 debugPrint('Start google sign in');
@@ -151,21 +134,21 @@ class RestaurantLoginScreen extends StatelessWidget {
           ],
           onRecoverPassword: _recoverPassword,
           messages: LoginMessages(
-            additionalSignUpFormDescription: "Kaydı tamamlamak için formu doldurunuz.",
-            additionalSignUpSubmitButton: "Gönder",
-            providersTitleFirst: 'Veya',
-            userHint: 'E-Mail',
-            passwordHint: 'Şifre',
-            confirmPasswordHint: 'Şifre Tekrar',
-            loginButton: 'Giriş',
-            signupButton: 'Kayıt Ol',
-            forgotPasswordButton: 'Şifremi Unuttum',
-            recoverPasswordButton: 'Sıfırla',
-            goBackButton: 'Geri',
-            recoverPasswordIntro: 'Şifreni Sıfırla',
-            confirmPasswordError: 'Şifreler eşleşmedi.',
-            recoverPasswordDescription: 'E-Mail adresinize şifre sıfırlama bağlantısı gönderilecek.',
-            recoverPasswordSuccess: 'Sıfırlama bağlantısı gönderildi.',
+            additionalSignUpFormDescription: "kaydı_tamamlamak_için_formu_doldurunuz".tr,
+            additionalSignUpSubmitButton: "gönder".tr,
+            providersTitleFirst: 'veya'.tr,
+            userHint: 'e_posta'.tr,
+            passwordHint: 'şifre'.tr,
+            confirmPasswordHint: 'şifre_tekrar'.tr,
+            loginButton: 'giriş'.tr,
+            signupButton: 'kayıt_ol'.tr,
+            forgotPasswordButton: 'şifremi_unuttum'.tr,
+            recoverPasswordButton: 'sıfırla'.tr,
+            goBackButton: 'geri'.tr,
+            recoverPasswordIntro: 'şifreni_sıfırla'.tr,
+            confirmPasswordError: 'şifreler_eşleşmedi'.tr,
+            recoverPasswordDescription: 'E-Mail_adresinize_şifre_sıfırlama_bağlantısı_gönderilecek'.tr,
+            recoverPasswordSuccess: 'sıfırlama_bağlantısı_gönderildi.'.tr,
           ),
         ),
       ),

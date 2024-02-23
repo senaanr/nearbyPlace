@@ -69,7 +69,11 @@ class CategoryFiltering extends StatelessWidget {
 */
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../class/product.dart';
+import '../class/themes.dart';
+import '../screens/category_filter_screen.dart';
+import '../screens/restaurant_list.dart';
 import 'CategoryItem.dart';
 import 'CategoriesGetir.dart';
 
@@ -81,21 +85,144 @@ class CategoryFiltering extends StatelessWidget {
     final List<Category> categories = categoriesGetir.getCategories();
 
     return MaterialApp(
+      theme: Themes.lightTheme,
+      darkTheme: Themes.darkTheme,
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 1.0,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          title: Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.arrow_back_outlined, color: Colors.red),
+                iconSize: 23,
+          onPressed: () => Navigator.of(context).pop(),
+                ),
+              SizedBox(width: 2),
+              Expanded(
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width - 16.0,
+                  ),
+                  child: HomeSearchBar(),
+                ),
+              ),
+            ],
           ),
-          itemCount: categories.length,
-          itemBuilder: (context, index) {
-            Category category = categories[index];
-            return CategoryItem(
-              categoryName: category.name,
-              imageUrl: category.src,
+        ),
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: Theme.of(context).brightness == Brightness.light
+                  ? AssetImage('assets/image/road3.jpg')
+                  : AssetImage('assets/image/road2.jpg'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Text(
+                    'İlginizi_Çekebilecek_Ürünler'.tr,
+                    style: const TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 70,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      _buildProductCategoryBox(context, 'pizza'.tr),
+                      _buildProductCategoryBox(context, 'burger'.tr),
+                      _buildProductCategoryBox(context, 'dominos'.tr),
+                      _buildProductCategoryBox(context, 'çorba'.tr),
+                      _buildProductCategoryBox(context, 'lahmacun'.tr),
+                      _buildProductCategoryBox(context, 'döner'.tr),
+                      _buildProductCategoryBox(context, 'tatlı'.tr),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Text(
+                    'kategoriler'.tr,
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 1.0,
+                    ),
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      Category category = categories[index];
+                      return CategoryItem(
+                        categoryName: category.name,
+                        imageUrl: category.src,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductCategoryBox(BuildContext context, String categoryName) {
+    return GestureDetector(
+        onTap: () {
+          if (categoryName != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RestaurantListScreen(categoryName: categoryName!),
+              ),
             );
-          },
+          }
+        },
+      child: Container(
+        margin: EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.light
+              ? Colors.white
+              : Colors.black,
+          borderRadius: BorderRadius.circular(8.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            categoryName,
+            style: TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).textTheme.titleLarge?.color,
+            ),
+          ),
         ),
       ),
     );
