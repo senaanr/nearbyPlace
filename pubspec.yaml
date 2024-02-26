@@ -52,6 +52,7 @@ dependencies:
   firebase_auth: ^4.17.4
   cloud_firestore: ^4.15.5
   flutter_rating_bar: ^4.0.1
+  circular_bottom_navigation: ^2.3.0
 
 flutter_icons:
   android: "launcher_icon"

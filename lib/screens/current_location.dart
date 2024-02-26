@@ -105,15 +105,21 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
 }
 */
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as location;
 import 'package:geocoding/geocoding.dart';
 import 'package:location/location.dart';
+import 'package:myapp/components/myBottomTab.dart';
 import 'package:myapp/components/myDrawer.dart';
+import 'package:myapp/screens/restaurant_list.dart';
+import 'package:myapp/screens/restaurant_map_screen.dart';
 import '../class/user.dart';
 import 'category_filter_screen.dart';
+import 'favourite_restaurants_screen.dart';
+import 'myProfil_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final User? user;
@@ -167,21 +173,105 @@ class _HomeScreenState extends State<HomeScreen> {
       Placemark placemark = placemarks.first;
       setState(() {
         currentAddress =
-        "${placemark.street}, \n${placemark.subLocality}, ${placemark.locality}";
+            "${placemark.street}, \n${placemark.subLocality}, ${placemark.locality}";
       });
     }
 
     mapController!.animateCamera(CameraUpdate.newLatLng(currentLocation));
   }
 
+  int _selectedIndex = 0;
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text(
+      'Index 0: Anasayfa',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 1: Favoriler',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 2: Yakındakiler',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 2: Hesabım',
+      style: optionStyle,
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => FavoriteRestaurants()),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MapScreen()),
+        );
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => AccountPage()),
+        );
+        break;
+    }
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(0.0),
-        child: AppBar(),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Anasayfa',
+            backgroundColor: CupertinoColors.destructiveRed,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Favoriler',
+            backgroundColor: Colors.green,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.near_me_outlined),
+            label: 'Yakındakiler',
+            backgroundColor: Colors.purple,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_box_outlined),
+            label: 'Hesabım',
+            backgroundColor: Colors.pink,
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
       ),
-      bottomNavigationBar: MyBottomNavigationBar(),
       body: SafeArea(
         child: Theme(
           data: Theme.of(context),
@@ -216,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.titleLarge?.color,
                     ),
                   ),
                 ),

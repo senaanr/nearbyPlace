@@ -13,11 +13,11 @@ class CouponPage extends StatelessWidget {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 17,
+            color: Theme.of(context).textTheme.titleLarge?.color,
           ),
         ),
         centerTitle: true,
       ),
-      bottomNavigationBar: MyBottomNavigationBar(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

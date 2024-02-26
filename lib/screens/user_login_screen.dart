@@ -133,10 +133,10 @@ class UserLoginScreen extends StatelessWidget {
                 return null;
               },
             ),
-            const UserFormField(
+            /*const UserFormField(
               keyName: 'Onay Kod',
               icon: Icon(Icons.numbers),
-            ),
+            ),*/
           ],
           onLogin: _loginUser,
           onSignup: _signupUser,

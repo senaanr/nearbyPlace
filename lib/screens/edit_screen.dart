@@ -43,7 +43,7 @@ class _EditPageState extends State<EditPage> {
               onPressed: () {
                 Navigator.pop(context, _controller.text);
               },
-              child: Text('kaydet'.tr),
+              child: Text('kaydet'.tr, style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color,),),
             ),
           ],
         ),

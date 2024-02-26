@@ -98,7 +98,13 @@ class Language extends Translations{
       "bu_kategoride_restoran_bulunamadı":"Could not find any resaurants in this category.",
       "çıkış_yap":"Log out",
       "değerlendirmeler":"Reviews",
-      "değerlendirme_bulunmamaktadır":"No Reviews."
+      "değerlendirme_bulunmamaktadır":"No Reviews.",
+      "gönder": "Send",
+      "iptal":"Cancel",
+      "bu_restoranı_değerlendir": "Rate this restaurant",
+      "değerlendir":"Evaluate",
+      "iletişim":"Communication",
+      "şifre_değiştir":"Change Password",
     },
     'tr_TR':{
       "kullanıcı": "Kullanıcı",
@@ -189,6 +195,12 @@ class Language extends Translations{
       "çıkış_yap":"Çıkış Yap",
       "değerlendirmeler":"Değerlendirmeler",
       "değerlendirme_bulunmamaktadır":"Değerlendirme Bulunmamaktadır.",
+      "gönder":"Gönder",
+      "iptal":"İptal",
+      "bu_restoranı_değerlendir":"Bu restoranı değerlendir",
+      "değerlendir":"Değerlendir",
+      "iletişim":"İletişim",
+      "şifre_değiştir":"Şifre Değiştir",
     }
   };
 }

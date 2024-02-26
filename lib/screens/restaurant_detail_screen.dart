@@ -78,12 +78,12 @@ class RestaurantDetails extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildInfoRow(
-                              Icons.location_on, 'adres:'.tr, restaurant.address),
-                          _buildInfoRow(
-                              Icons.phone, 'telefon:'.tr, restaurant.phoneNumber),
-                          _buildInfoRow(
-                              Icons.language, 'website:'.tr, restaurant.website),
+                          _buildInfoRow(Icons.location_on, 'adres:'.tr,
+                              restaurant.address),
+                          _buildInfoRow(Icons.phone, 'telefon:'.tr,
+                              restaurant.phoneNumber),
+                          _buildInfoRow(Icons.language, 'website:'.tr,
+                              restaurant.website),
                           _buildOpeningHours(restaurant.openingHours),
                         ],
                       ),
@@ -92,7 +92,10 @@ class RestaurantDetails extends StatelessWidget {
                       Text(
                         'yorumlar'.tr,
                         style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold),
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).textTheme.titleLarge?.color,
+                        ),
                       ),
                       SizedBox(height: 8.0),
                       // Restoran yorumları
@@ -102,7 +105,8 @@ class RestaurantDetails extends StatelessWidget {
                       Text(
                         'değerlendirmeler'.tr,
                         style: TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold),
+                            fontSize: 20.0, fontWeight: FontWeight.bold,
+                          color: Theme.of(context).textTheme.titleLarge?.color,),
                       ),
                       SizedBox(height: 8.0),
                       // Firebase yorumlarını göster
@@ -118,8 +122,7 @@ class RestaurantDetails extends StatelessWidget {
     );
   }
 
-
-Widget _buildReviewsList(List<Review> reviews) {
+  Widget _buildReviewsList(List<Review> reviews) {
     return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -132,7 +135,7 @@ Widget _buildReviewsList(List<Review> reviews) {
               leading: Icon(Icons.person),
               title: Text(
                 reviews[index].userName.tr,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).textTheme.titleLarge?.color,),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,12 +147,12 @@ Widget _buildReviewsList(List<Review> reviews) {
                       SizedBox(width: 4),
                       Text(
                         reviews[index].rating.toString().tr,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(fontWeight: FontWeight.bold,color: Theme.of(context).textTheme.titleLarge?.color,),
                       ),
                     ],
                   ),
                   SizedBox(height: 4),
-                  Text(reviews[index].comment.tr),
+                  Text(reviews[index].comment.tr, style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color,),),
                 ],
               ),
             ),
@@ -172,20 +175,19 @@ Widget _buildReviewsList(List<Review> reviews) {
           List<Review>? firebaseReviews = firebaseSnapshot.data;
 
           if (firebaseReviews == null || firebaseReviews.isEmpty) {
-            return Center(child: Text('değerlendirme_bulunmamaktadır'.tr));
+            return Center(child: Text('değerlendirme_bulunmamaktadır'.tr,
+            style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color,),));
           }
 
           return Container(
-            height: 200, // Set a fixed height or use constraints based on your UI design
+            height:
+                200, // Set a fixed height or use constraints based on your UI design
             child: _buildReviewsList(firebaseReviews),
           );
         }
       },
     );
   }
-
-
-
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Padding(
@@ -195,7 +197,8 @@ Widget _buildReviewsList(List<Review> reviews) {
         children: [
           Icon(icon, color: Colors.grey),
           SizedBox(width: 8),
-          Flexible( // Wrap the Text widget with Flexible
+          Flexible(
+            // Wrap the Text widget with Flexible
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -206,7 +209,8 @@ Widget _buildReviewsList(List<Review> reviews) {
                 SizedBox(height: 2),
                 Text(
                   value.tr,
-                  overflow: TextOverflow.ellipsis, // Add this line to handle overflow
+                  overflow:
+                      TextOverflow.ellipsis, // Add this line to handle overflow
                   maxLines: 3, // You can adjust the number of lines
                 ),
               ],
@@ -219,11 +223,12 @@ Widget _buildReviewsList(List<Review> reviews) {
 
   Future<List<Review>> fetchFirebaseReviews(String placeId) async {
     try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
-          .collection('restaurantReviews')
-          .doc(placeId)
-          .collection('reviews')
-          .get();
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('restaurantReviews')
+              .doc(placeId)
+              .collection('reviews')
+              .get();
 
       List<Review> reviews = querySnapshot.docs.map((doc) {
         return Review(
@@ -255,7 +260,8 @@ Widget _buildReviewsList(List<Review> reviews) {
   }
 
   Future<Restaurant> fetchRestaurantDetails(String placeId) async {
-    final apiKey = 'AIzaSyCnSvScJH5ItNThRlphgqAtnk9i0W85mlc'; // Replace with your actual API key
+    final apiKey =
+        'AIzaSyCnSvScJH5ItNThRlphgqAtnk9i0W85mlc'; // Replace with your actual API key
     final url =
         'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=name,rating,formatted_address,formatted_phone_number,website,opening_hours,reviews,geometry&key=$apiKey';
 
@@ -267,13 +273,17 @@ Widget _buildReviewsList(List<Review> reviews) {
 
       final String id = placeId;
       final String name = result['name'] ?? '';
-      final double rating = result['rating'] != null ? double.parse(result['rating'].toString()) : 0.0;
-      final String photoReference = ''; // Photo reference, a separate API request can be made to get it.
+      final double rating = result['rating'] != null
+          ? double.parse(result['rating'].toString())
+          : 0.0;
+      final String photoReference =
+          ''; // Photo reference, a separate API request can be made to get it.
       final double lat = result['geometry']['location']['lat'];
       final double lng = result['geometry']['location']['lng'];
       final double distance = 0;
       final String address = result['formatted_address'] ?? '';
-      final List<Review> reviews = (result['reviews'] as List<dynamic>).map((review) {
+      final List<Review> reviews =
+          (result['reviews'] as List<dynamic>).map((review) {
         return Review(
           userName: review['author_name'] ?? '',
           rating: review['rating'] != null ? review['rating'].toInt() : 0,
@@ -283,7 +293,9 @@ Widget _buildReviewsList(List<Review> reviews) {
 
       final String phoneNumber = result['formatted_phone_number'] ?? '';
       final String website = result['website'] ?? '';
-      final String openingHours = result['opening_hours'] != null ? result['opening_hours']['weekday_text'].join('\n') : '';
+      final String openingHours = result['opening_hours'] != null
+          ? result['opening_hours']['weekday_text'].join('\n')
+          : '';
 
       return Restaurant(
         id: id,
@@ -303,119 +315,121 @@ Widget _buildReviewsList(List<Review> reviews) {
       throw Exception('Failed to load restaurant details');
     }
   }
-Future<String> getAuthorName() async {
-  try {
-    var authorEmail = FirebaseAuth.instance.currentUser!.email.toString();
 
-    var userSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: authorEmail)
-        .get();
+  Future<String> getAuthorName() async {
+    try {
+      var authorEmail = FirebaseAuth.instance.currentUser!.email.toString();
 
-    if (userSnapshot.docs.isNotEmpty) {
-      var userDocument = userSnapshot.docs.first;
-      var userName = userDocument['name'];
-      var userSurname = userDocument['surname'];
+      var userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: authorEmail)
+          .get();
 
-      return '$userName $userSurname';
-    } else {
-      return 'User not found';
+      if (userSnapshot.docs.isNotEmpty) {
+        var userDocument = userSnapshot.docs.first;
+        var userName = userDocument['name'];
+        var userSurname = userDocument['surname'];
+
+        return '$userName $userSurname';
+      } else {
+        return 'User not found';
+      }
+    } catch (e) {
+      print('Error getting author name: $e');
+      return 'Error';
     }
-  } catch (e) {
-    print('Error getting author name: $e');
-    return 'Error';
   }
-}
 
-void _showRatingDialog(BuildContext context, String placeId) {
-  double rating = 0;
-  String comment = '';
+  void _showRatingDialog(BuildContext context, String placeId) {
+    double rating = 0;
+    String comment = '';
 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: Text('Değerlendir'),
-            content: Column(
-              children: [
-                Text('Bu restoranı değerlendir'),
-                SizedBox(height: 10),
-                RatingBar.builder(
-                  initialRating: rating,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: false,
-                  itemCount: 5,
-                  itemSize: 40,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('değerlendir'.tr),
+              content: Column(
+                children: [
+                  Text('bu_restoranı_değerlendir'.tr),
+                  SizedBox(height: 10),
+                  RatingBar.builder(
+                    initialRating: rating,
+                    minRating: 1,
+                    direction: Axis.horizontal,
+                    allowHalfRating: false,
+                    itemCount: 5,
+                    itemSize: 40,
+                    itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                    itemBuilder: (context, _) => Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                    ),
+                    onRatingUpdate: (value) {
+                      setState(() {
+                        rating = value;
+                      });
+                    },
                   ),
-                  onRatingUpdate: (value) {
-                    setState(() {
-                      rating = value;
-                    });
+                  SizedBox(height: 10),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Yorumunuz',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                    onChanged: (value) {
+                      setState(() {
+                        comment = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () async {
+                    String authorName = await getAuthorName();
+                    saveFirebaseReview(placeId, rating, comment, authorName);
+                    Navigator.of(context).pop();
                   },
+                  child: Text('gönder'.tr),
                 ),
-                SizedBox(height: 10),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Yorumunuz',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
-                  onChanged: (value) {
-                    setState(() {
-                      comment = value;
-                    });
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
                   },
+                  child: Text('iptal'.tr),
                 ),
               ],
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () async {
-                  String authorName = await getAuthorName();
-                  saveFirebaseReview(placeId, rating, comment, authorName);
-                  Navigator.of(context).pop();
-                },
-                child: Text('Gönder'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('İptal'),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
-
-Future<void> saveFirebaseReview(String placeId, double rating, String comment, String authorName) async {
-  try {
-    CollectionReference<
-        Map<String, dynamic>> reviewsCollection = FirebaseFirestore.instance
-        .collection('restaurantReviews')
-        .doc(placeId)
-        .collection('reviews');
-
-    await reviewsCollection.add({
-      'author_name': authorName,
-      'rating': rating,
-      'text': comment,
-    });
-
-    print('Review saved successfully');
-  } catch (e) {
-    print('Failed to save review: $e');
-    // Handle the error as needed
+            );
+          },
+        );
+      },
+    );
   }
-}
+
+  Future<void> saveFirebaseReview(
+      String placeId, double rating, String comment, String authorName) async {
+    try {
+      CollectionReference<Map<String, dynamic>> reviewsCollection =
+          FirebaseFirestore.instance
+              .collection('restaurantReviews')
+              .doc(placeId)
+              .collection('reviews');
+
+      await reviewsCollection.add({
+        'author_name': authorName,
+        'rating': rating,
+        'text': comment,
+      });
+
+      print('Review saved successfully');
+    } catch (e) {
+      print('Failed to save review: $e');
+      // Handle the error as needed
+    }
+  }
 }

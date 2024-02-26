@@ -1,218 +1,22 @@
-/*import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-
-import '../UI/image_container.dart';
-import '../bloc/bloc_provider.dart';
-import '../bloc/favorite_bloc.dart';
-import '../class/restaurant.dart';
-
-class Restaurant {
-  final String id;
-  final String name;
-  final List<String> categories;
-
-  Restaurant({required this.id, required this.name, required this.categories});
-
-  factory Restaurant.fromJson(Map<String, dynamic> json) {
-    final List<dynamic> categoryList = json['types'] ?? [];
-    final List<String> categories = categoryList.map((category) => category.toString()).toList();
-
-    return Restaurant(
-      id: json['place_id'],
-      name: json['name'],
-      categories: categories,
-    );
-  }
-}
-
-class RestaurantListScreen extends StatefulWidget {
-  final String categoryName;
-
-  RestaurantListScreen({required this.categoryName});
-
-  @override
-  _RestaurantListScreenState createState() => _RestaurantListScreenState();
-}
-
-class _RestaurantListScreenState extends State<RestaurantListScreen> {
-  late Future<List<Restaurant>> futureRestaurants;
-
-  @override
-  void initState() {
-    super.initState();
-    futureRestaurants = fetchRestaurantsByCategory(widget.categoryName);
-  }
-
-  Future<List<Restaurant>> fetchRestaurantsByCategory(String category) async {
-    final apiKey = 'AIzaSyCnSvScJH5ItNThRlphgqAtnk9i0W85mlc'; // API anahtarınızı buraya ekleyin
-    final radius = 5000; // 5 km
-    final type = 'restaurant'; // Sadece restoranları filtrele
-    final url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=40.7128,-74.0060&radius=$radius&type=$type&keyword=$category&key=$apiKey';
-
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      final List<dynamic> results = data['results'];
-
-      List<Restaurant> restaurants = results.map((result) {
-        return Restaurant.fromJson(result);
-      }).toList();
-
-      return restaurants;
-    } else {
-      throw Exception('Failed to load restaurants');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('${widget.categoryName}'),
-      ),
-      body: FutureBuilder<List<Restaurant>>(
-        future: futureRestaurants,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            final restaurants = snapshot.data!;
-            return ListView.builder(
-              itemCount: restaurants.length,
-              itemBuilder: (context, index) {
-                final restaurant = restaurants[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RestaurantDetailsScreen(restaurant: restaurant),
-                      ),
-                    );
-                  },
-                  child: ListTile(
-                    title: Text(restaurant.name),
-                    subtitle: Text('ID: ${restaurant.id}\nCategories: ${restaurant.categories.join(', ')}'),
-                  ),
-                );
-              },
-            );
-          }
-        },
-      ),
-    );
-  }
-}
-
-
-class RestaurantDetailsScreen extends StatelessWidget {
-  final Restaurant? restaurant;
-
-  const RestaurantDetailsScreen({this.restaurant});
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Scaffold(
-      appBar: AppBar(title: Text(restaurant!.name)),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _buildBanner(),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  restaurant!.cuisines,
-                  style: textTheme.titleMedium?.copyWith(fontSize: 18),
-                ),
-                Text(
-                  restaurant!.address,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w100),
-                ),
-              ],
-            ),
-          ),
-          _buildDetails(context),
-          _buildFavoriteButton(context)
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBanner() {
-    return ImageContainer(
-      height: 200,
-      url: restaurant!.imageUrl,
-    );
-  }
-
-  Widget _buildDetails(BuildContext context) {
-    final style = TextStyle(fontSize: 16);
-
-    return Padding(
-      padding: EdgeInsets.only(left: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            'Price: ${restaurant!.priceDisplay}',
-            style: style,
-          ),
-          SizedBox(width: 40),
-          Text(
-            'Rating: ${restaurant!.rating.average}',
-            style: style,
-          ),
-        ],
-      ),
-    );
-  }
-
-  // 1
-  Widget _buildFavoriteButton(BuildContext context) {
-    final bloc = BlocProvider.of<FavoriteBloc>(context);
-    return StreamBuilder<List<Restaurant>>(
-      stream: bloc.favoritesStream,
-      initialData: bloc.favorites,
-      builder: (context, snapshot) {
-        List<Restaurant>? favorites =
-        ((snapshot.connectionState == ConnectionState.waiting)
-            ? bloc.favorites
-            : snapshot.data)?.cast<Restaurant>();
-        bool? isFavorite = favorites?.contains(restaurant);
-
-        return ElevatedButton.icon(
-          onPressed: () => bloc.toggleRestaurant(restaurant!),
-          style: ButtonStyle(
-            foregroundColor: isFavorite != null && isFavorite ? MaterialStateProperty.all(Theme.of(context).hintColor) : null,
-          ),
-          icon: Icon(isFavorite != null && isFavorite ? Icons.favorite : Icons.favorite_border),
-          label: Text('Favorite'),
-        );
-      },
-    );
-  }
-}*/
 import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:myapp/components/myBottomTab.dart';
 import 'package:myapp/components/myDrawer.dart';
 import 'package:myapp/screens/restaurant_detail_screen.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:myapp/screens/restaurant_map_screen.dart';
 
 import '../constants/app_constants.dart';
+import 'current_location.dart';
+import 'myProfil_screen.dart';
 
 
 class Restaurant {
@@ -293,6 +97,13 @@ class Restaurant {
     double distance = radiusOfEarth * c;
     return distance;
   }
+  static Restaurant? findRestaurantById(List<Restaurant> restaurants, String id) {
+    try {
+      return restaurants.firstWhere((restaurant) => restaurant.id == id);
+    } catch (e) {
+      return null;
+    }
+  }
 
   static double deg2rad(double deg) {
     return deg * (pi / 180);
@@ -328,35 +139,6 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
   double userLng =0.0;
   String selectedSortBy = 'Puan';
   Set<String> favoriteRestaurantIds = {};
-
-  // Map to associate categories with background images
-  /*final Map<String, String> categoryBackgroundImages = {
-    "burger":"assets/image/burger.jpg",
-    "kebap_türk_mutfağı":"assets/image/burger.jpg",
-    "tatlı":"assets/image/burger.jpg",
-    "pizza":"assets/image/burger.jpg",
-    "çiğ_köfte":"assets/image/burger.jpg",
-    "kahve":"assets/image/burger.jpg",
-    "tantuni":"assets/image/burger.jpg",
-    "waffle":"assets/image/burger.jpg",
-    "kokoreç":"assets/image/burger.jpg",
-    "tavuk":"assets/image/burger.jpg",
-    "kumpir":"assets/image/burger.jpg",
-    "deniz_ürünleri":"assets/image/burger.jpg",
-    "tost_sandviç":"assets/image/burger.jpg",
-    "ev_yemekleri":"assets/image/burger.jpg",
-    "kahvaltı_börek":"assets/image/burger.jpg",
-    "makarna":"assets/image/burger.jpg",
-    "mantı":"assets/image/burger.jpg",
-    "salata":"assets/image/burger.jpg",
-    "pastane_fırın":"assets/image/burger.jpg",
-    "pilav":"assets/image/burger.jpg",
-    "çorba":"assets/image/burger.jpg",
-  };
-
-  String getBackgroundImage(String category) {
-    return categoryBackgroundImages[category] ?? 'assets/image/road3.jpg';
-  }*/
 
   @override
   void initState() {
@@ -442,7 +224,11 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
         body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(backgroundImage),
+              image: Theme
+                  .of(context)
+                  .brightness == Brightness.light
+                  ? AssetImage('assets/image/road3.jpg')
+                  : AssetImage('assets/image/road2.jpg'),
               fit: BoxFit.cover,
             ),
           ),
@@ -459,6 +245,7 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else {
                       final restaurants = snapshot.data!;
+                      print('Photo Reference: $restaurants.photoReference');
                       return ListView.builder(
                         itemCount: restaurants.length > 0 ? restaurants.length : 1,
                         itemBuilder: (context, index) {
@@ -546,17 +333,11 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
                                       right: 10,
                                       child: IconButton(
                                         icon: Icon(
-                                          favoriteRestaurantIds.contains(restaurant.id) ? Icons.favorite : Icons.favorite_border,
+                                          favoriteRestaurantIds!.contains(restaurant.id) ? Icons.favorite : Icons.favorite_border,
                                           color: Colors.red,
                                         ),
                                         onPressed: () {
-                                          setState(() {
-                                            if (favoriteRestaurantIds.contains(restaurant.id)) {
-                                              favoriteRestaurantIds.remove(restaurant.id);
-                                            } else {
-                                              favoriteRestaurantIds.add(restaurant.id);
-                                            }
-                                          });
+                                          favRestaurant(restaurant.id, FirebaseAuth.instance, updateFavoriteRestaurantIds);
                                         },
                                       ),
                                     ),
@@ -566,7 +347,10 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
                             );
                           } else {
                             return Center(
-                              child: Text('bu_kategoride_restoran_bulunamadı.'.tr),
+                              child: Text('bu_kategoride_restoran_bulunamadı.'.tr ,
+                              style: TextStyle(
+                                color: Theme.of(context).textTheme.titleLarge?.color,
+                              ),),
                             );
                           }
                         },
@@ -584,7 +368,7 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('sıralama'.tr),
+          title: Text('sıralama'.tr, style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color,),),
           content: DropdownButton<String>(
             value: selectedSortBy,
             onChanged: (String? newValue) {
@@ -602,7 +386,7 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('kapat'.tr),
+              child: Text('kapat'.tr, style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color,),),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -618,45 +402,128 @@ class _RestaurantListScreenState extends State<RestaurantListScreen> {
     // Eğer kategoriye özel bir resim yoksa, default bir resim döndür
     return AppConstants.categoryBackgroundImages[category] ?? AppConstants.defaultBackgroundImage;
   }
-}
 
 
-class FavoriteRestaurants extends StatelessWidget {
-  final List<Restaurant>? favoriteRestaurants;
+  Future<void> favRestaurant(
+      String placeId, FirebaseAuth auth, Function(List<String>) updateFavoriteRestaurantIds) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  FavoriteRestaurants({this.favoriteRestaurants});
+    try {
+      String? userEmail = auth.currentUser?.email;
+      if (userEmail != null) {
+        DocumentReference restaurantDocRef = firestore
+            .collection('favouriteRestaurants')
+            .doc(userEmail)
+            .collection('favRestaurants')
+            .doc(placeId);
+        DocumentSnapshot restaurantDoc = await restaurantDocRef.get();
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('favori_restoranlar'.tr),
-        centerTitle: true,
+        if (restaurantDoc.exists) {
+          // If the restaurant document exists, remove it
+          await restaurantDocRef.delete();
+        } else {
+          // If the restaurant document doesn't exist, add it
+          await restaurantDocRef.set({'restaurantId': placeId});
+        }
+
+        // Update favoriteRestaurantIds after modifying the Firestore data
+        List<String> updatedFavoriteRestaurantIds = await fetchFavoriteRestaurantIds(userEmail, firestore);
+        updateFavoriteRestaurantIds(updatedFavoriteRestaurantIds);
+      } else {
+        // Handle the case where the user is not authenticated or email is not available
+      }
+    } catch (e) {
+      print('Error: $e');
+      // Handle errors appropriately
+    }
+  }
+
+  Future<List<String>> fetchFavoriteRestaurantIds(String? userEmail, FirebaseFirestore firestore) async {
+    List<String> favoriteRestaurantIds = [];
+
+    try {
+      QuerySnapshot userDoc = await firestore.collection('favouriteRestaurants').doc(userEmail).collection('favRestaurants').get();
+      userDoc.docs.forEach((doc) {
+        favoriteRestaurantIds!.add(doc.id);
+      });
+    } catch (e) {
+      print('Error fetching favorite restaurant IDs: $e');
+    }
+
+    return favoriteRestaurantIds;
+  }
+  void updateFavoriteRestaurantIds(List<String> updatedIds) {
+    setState(() {
+      favoriteRestaurantIds = updatedIds.toSet();
+    });
+  }
+
+// Method to load the list of favorite restaurant IDs from Firestore
+  Future<void> loadFavoriteRestaurantIdsFromFirestore() async {
+    try {
+      // Get the current user's email
+      String? userEmail = FirebaseAuth.instance.currentUser?.email;
+      if (userEmail != null) {
+        // Reference to the collection of favorite restaurants for the user
+        CollectionReference userFavoritesRef = FirebaseFirestore.instance
+            .collection('favouriteRestaurants')
+            .doc(userEmail)
+            .collection('favRestaurants');
+
+        // Get the documents inside the collection
+        QuerySnapshot querySnapshot = await userFavoritesRef.get();
+
+        // Extract restaurant IDs from the documents
+        if (querySnapshot.docs.isNotEmpty) {
+          setState(() {
+            // Extract restaurant IDs from document names
+            favoriteRestaurantIds = Set<String>.from(
+                querySnapshot.docs.map((doc) => doc.id));
+            print(favoriteRestaurantIds.first); // Print the first restaurant ID
+          });
+        } else {
+          print("No favorite restaurants found");
+        }
+      } else {
+        print("User email is null");
+      }
+    } catch (e) {
+      print('Error loading favorite restaurant IDs from Firestore: $e');
+    }
+  }
+
+// In the build method, check if each restaurant is a favorite and update the UI accordingly
+  Marker createMarker(Restaurant restaurant) {
+    bool isFavorite = favoriteRestaurantIds?.contains(restaurant.id) ?? false;
+    IconData iconData = isFavorite ? Icons.favorite : Icons.favorite_border;
+    return Marker(
+      markerId: MarkerId(restaurant.name),
+      position: LatLng(restaurant.latitude, restaurant.longitude),
+      infoWindow: InfoWindow(title: restaurant.name),
+      icon: BitmapDescriptor.defaultMarkerWithHue(
+        isFavorite ? BitmapDescriptor.hueRed : BitmapDescriptor.hueBlue,
       ),
-      bottomNavigationBar: MyBottomNavigationBar(),
-      body: favoriteRestaurants != null
-          ? ListView.builder(
-        itemCount: favoriteRestaurants!.length,
-        itemBuilder: (context, index) {
-          final restaurant = favoriteRestaurants![index];
-          return ListTile(
-            title: Text(restaurant.name),
-            subtitle: Text(
-                '${restaurant.distance.toStringAsFixed(2)} km (${restaurant.rating.toStringAsFixed(1)})'),
-            leading: Image.network(
-              restaurant.photoReference.isNotEmpty
-                  ? 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${restaurant.photoReference}&key=AIzaSyCnSvScJH5ItNThRlphgqAtnk9i0W85mlc'
-                  : 'https://media.istockphoto.com/id/1267161539/vector/meal-breaks-vector-line-icon-simple-thin-line-icon-premium-quality-design-element.jpg?s=612x612&w=0&k=20&c=9RNCS0uQvtbUGXqnmK1slk2y4rOOkJlE8bJ2W2qW9tY=', // Varsayılan fotoğraf URL'si
-              fit: BoxFit.cover,
-              width: 100,
-              height: 100,
-            ),
-          );
-        },
-      )
-          : Center(
-        child: Text('favori_restoranınız_bulunmamaktadır'.tr),
-      ),
+      onTap: () {
+        // You can implement toggling favorites in Firestore here
+        toggleFavoriteStatusInFirestore(restaurant.id, !isFavorite);
+      },
     );
   }
+
+// Method to toggle the favorite status in Firestore
+  Future<void> toggleFavoriteStatusInFirestore(String restaurantId, bool isFavorite) async {
+    try {
+      DocumentReference restaurantRef = FirebaseFirestore.instance.collection('favorites').doc(restaurantId);
+
+      if (isFavorite) {
+        await restaurantRef.set({'isFavorite': true});
+      } else {
+        await restaurantRef.delete();
+      }
+    } catch (e) {
+      print('Error toggling favorite status in Firestore: $e');
+    }
+  }
 }
+
+

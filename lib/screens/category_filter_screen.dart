@@ -138,6 +138,7 @@ class HomeSearchBar extends StatelessWidget {
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:myapp/screens/search_screen.dart';
 import '../class/product.dart';
 import '../class/themes.dart';
 import '../components/CategoriesGetir.dart';
@@ -242,6 +243,9 @@ class CombinedScreen extends StatelessWidget {
                     ),
                     itemCount: categories.length,
                     itemBuilder: (context, index) {
+                      // "categories" listesini isimlere göre sırala
+                      categories.sort((a, b) => a.name.compareTo(b.name));
+
                       Category category = categories[index];
                       return CategoryItem(
                         categoryName: category.name,
@@ -250,6 +254,7 @@ class CombinedScreen extends StatelessWidget {
                     },
                   ),
                 ),
+
               ],
             ),
           ),
@@ -320,7 +325,6 @@ class CombinedScreen extends StatelessWidget {
 
 class _HomeSearchBarState extends State<HomeSearchBar> {
   final TextEditingController searchController = TextEditingController();
-  List<String> searchResults = [];
 
   @override
   Widget build(BuildContext context) {
@@ -345,9 +349,14 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
               Expanded(
                 child: TextField(
                   controller: searchController,
-                  onChanged: (value) {
-                    // Update search results based on the entered search term
-                    updateSearchResults(value);
+                  onSubmitted: (value) {
+                    // Navigate to the search screen with the entered search term
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SearchScreen(searchTerm: value),
+                      ),
+                    );
                   },
                   decoration: InputDecoration(
                     hintText: 'bugün_ne_yesem'.tr,
@@ -358,57 +367,24 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
               IconButton(
                 icon: Icon(Icons.search),
                 onPressed: () {
-                  // Handle search button press, if needed
-                  // You can perform additional actions or navigate to a search results screen
+                  // Navigate to the search screen with the entered search term
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchScreen(searchTerm: searchController.text),
+                    ),
+                  );
                 },
               ),
             ],
           ),
         ),
-        // Display search results
-        if (searchResults.isNotEmpty)
-          Container(
-            height: 100, // Adjust the height as needed
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            color: Colors.white,
-            child: ListView.builder(
-              itemCount: searchResults.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: GestureDetector(
-                    onTap: () {
-                      // Tıklanan arama sonucu için restoranları getir
-                      getRestaurantsForSearchResult(searchResults[index]);
-                    },
-                    child: Text(searchResults[index].tr),
-                  ),
-                );
-              },
-            ),
-          ),
       ],
     );
   }
-
-  void updateSearchResults(String searchTerm) {
-    // Implement your logic to update search results based on the entered search term
-    // For example, you can filter a list of items that contain the search term
-    setState(() {
-      searchResults = dummySearchResults
-          .where((result) => result.toLowerCase().contains(searchTerm.toLowerCase()))
-          .toList();
-    });
-  }
-
-  void getRestaurantsForSearchResult(String searchResult) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RestaurantListScreen(categoryName: searchResult),
-      ),
-    );
-  }
 }
+
+
 
 // Replace dummySearchResults with your actual data
 List<String> dummySearchResults = [
